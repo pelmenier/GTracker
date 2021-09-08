@@ -43,10 +43,7 @@ namespace GMapWF
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonShowMarkers = new System.Windows.Forms.Button();
             this.buttonHideMarkers = new System.Windows.Forms.Button();
-            this.textBoxTESTLat = new System.Windows.Forms.TextBox();
-            this.textBoxTESTLng = new System.Windows.Forms.TextBox();
             this.markerBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -95,7 +92,6 @@ namespace GMapWF
             // textBoxLat
             // 
             this.textBoxLat.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxLat.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.markerBindingSource, "Latitude", true));
             this.textBoxLat.Enabled = false;
             this.textBoxLat.Location = new System.Drawing.Point(4, 35);
             this.textBoxLat.Name = "textBoxLat";
@@ -150,11 +146,12 @@ namespace GMapWF
             // 
             // buttonDeleteMarker
             // 
+            this.buttonDeleteMarker.Enabled = false;
             this.buttonDeleteMarker.Location = new System.Drawing.Point(102, 134);
             this.buttonDeleteMarker.Name = "buttonDeleteMarker";
             this.buttonDeleteMarker.Size = new System.Drawing.Size(75, 23);
             this.buttonDeleteMarker.TabIndex = 8;
-            this.buttonDeleteMarker.Text = "Delete";
+            this.buttonDeleteMarker.Text = "Remove";
             this.buttonDeleteMarker.UseVisualStyleBackColor = true;
             this.buttonDeleteMarker.Click += new System.EventHandler(this.buttonDeleteMarker_Click);
             // 
@@ -178,6 +175,7 @@ namespace GMapWF
             // 
             // buttonAddOrUpdate
             // 
+            this.buttonAddOrUpdate.Enabled = false;
             this.buttonAddOrUpdate.Location = new System.Drawing.Point(7, 134);
             this.buttonAddOrUpdate.Name = "buttonAddOrUpdate";
             this.buttonAddOrUpdate.Size = new System.Drawing.Size(75, 23);
@@ -203,9 +201,6 @@ namespace GMapWF
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.label4);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxTESTLng);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxTESTLat);
             this.splitContainer1.Panel2.Controls.Add(this.buttonShowMarkers);
             this.splitContainer1.Panel2.Controls.Add(this.buttonHideMarkers);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
@@ -215,7 +210,7 @@ namespace GMapWF
             // 
             // buttonShowMarkers
             // 
-            this.buttonShowMarkers.Location = new System.Drawing.Point(9, 498);
+            this.buttonShowMarkers.Location = new System.Drawing.Point(50, 185);
             this.buttonShowMarkers.Name = "buttonShowMarkers";
             this.buttonShowMarkers.Size = new System.Drawing.Size(84, 23);
             this.buttonShowMarkers.TabIndex = 7;
@@ -225,40 +220,17 @@ namespace GMapWF
             // 
             // buttonHideMarkers
             // 
-            this.buttonHideMarkers.Location = new System.Drawing.Point(107, 498);
+            this.buttonHideMarkers.Location = new System.Drawing.Point(50, 214);
             this.buttonHideMarkers.Name = "buttonHideMarkers";
-            this.buttonHideMarkers.Size = new System.Drawing.Size(75, 23);
+            this.buttonHideMarkers.Size = new System.Drawing.Size(84, 23);
             this.buttonHideMarkers.TabIndex = 6;
             this.buttonHideMarkers.Text = "hide markers";
             this.buttonHideMarkers.UseVisualStyleBackColor = true;
             this.buttonHideMarkers.Click += new System.EventHandler(this.buttonHideMarkers_Click);
             // 
-            // textBoxTESTLat
-            // 
-            this.textBoxTESTLat.Location = new System.Drawing.Point(12, 198);
-            this.textBoxTESTLat.Name = "textBoxTESTLat";
-            this.textBoxTESTLat.Size = new System.Drawing.Size(170, 20);
-            this.textBoxTESTLat.TabIndex = 8;
-            // 
-            // textBoxTESTLng
-            // 
-            this.textBoxTESTLng.Location = new System.Drawing.Point(12, 225);
-            this.textBoxTESTLng.Name = "textBoxTESTLng";
-            this.textBoxTESTLng.Size = new System.Drawing.Size(170, 20);
-            this.textBoxTESTLng.TabIndex = 9;
-            // 
             // markerBindingSource
             // 
             this.markerBindingSource.DataSource = typeof(GMapWF.Models.Marker);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(77, 257);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "label4";
             // 
             // Form1
             // 
@@ -298,9 +270,6 @@ namespace GMapWF
         private System.Windows.Forms.BindingSource markerBindingSource;
         private System.Windows.Forms.Button buttonDeleteMarker;
         private System.Windows.Forms.Button buttonShowMarkers;
-        private System.Windows.Forms.TextBox textBoxTESTLng;
-        private System.Windows.Forms.TextBox textBoxTESTLat;
-        private System.Windows.Forms.Label label4;
     }
 }
 

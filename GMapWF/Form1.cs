@@ -88,9 +88,13 @@ namespace GMapWF
 
         private void MapControlMouseMove(object sender, MouseEventArgs e)
         {
-            if (isMarkerEnter && isMouseDown)                
+            if (isMarkerEnter && isMouseDown)
+            {
+                buttonAddOrUpdate.Enabled = false;
                 if (currentMarker != null)                                    
-                    NewPositionMarker(e);                   
+                    NewPositionMarker(e);        
+            }      
+                           
                            
         }
 
@@ -131,8 +135,10 @@ namespace GMapWF
             {                
                 FillMarkerInfo(item);
                 buttonAddOrUpdate.Text = "Update";
+                buttonAddOrUpdate.Enabled = true;
                 lat = item.Position.Lat;
                 lng = item.Position.Lng;
+                buttonDeleteMarker.Enabled = true;
             }            
         }
 
@@ -153,6 +159,8 @@ namespace GMapWF
 
         private void gMapControl_OnMapClick(PointLatLng pointClick, MouseEventArgs e)
         {
+            if (buttonAddOrUpdate.Text == "Add")
+                buttonAddOrUpdate.Enabled = true;
             textBoxLat.Text = pointClick.Lat.ToString();
             textBoxLng.Text = pointClick.Lng.ToString();
             textBoxDiscr.Text = "";
@@ -194,9 +202,11 @@ namespace GMapWF
         {
             if (MessageBox.Show("Remove marker?", "Remove", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                bool itsOk = MarkerService.RemoveMarker(new GMarkerGoogle(new PointLatLng(Convert.ToDouble(textBoxLat.Text), Convert.ToDouble(textBoxLng.Text)), GMarkerGoogleType.arrow));
+                bool itsOk = MarkerService.RemoveMarker(new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.arrow));
                 if (!itsOk)
                     MessageBox.Show("Маркера с такими данными не найдено!");
+
+                buttonDeleteMarker.Enabled = false;
             }
             ShowMarkers();
         }
