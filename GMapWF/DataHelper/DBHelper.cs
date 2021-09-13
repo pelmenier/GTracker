@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using System.Configuration;
-using System.Data.SqlClient;
-using GMapWF.Models;
+﻿using GMap.NET;
 using GMap.NET.WindowsForms.Markers;
-using GMap.NET;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace GMapWF.DataHelper
 {
     public static class DBHelper
     {
-        private static string conStr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;  
+        private static string _conStr = "";/* = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;  */
         
         public static IEnumerable<GMarkerGoogle> GetMarkers()
         {
             List<GMarkerGoogle> markers = new List<GMarkerGoogle>();
-            using(SqlConnection connection = new SqlConnection(conStr))
+            using(SqlConnection connection = new SqlConnection(_conStr))
             { 
                 connection.Open();
 
@@ -44,7 +40,7 @@ namespace GMapWF.DataHelper
 
         public static void AddMarker(GMarkerGoogle marker)
         {
-            using (SqlConnection connection = new SqlConnection(conStr))
+            using (SqlConnection connection = new SqlConnection(_conStr))
             {
                 connection.Open();
                 if(marker != null)
@@ -53,7 +49,6 @@ namespace GMapWF.DataHelper
                     cmd.Parameters.AddWithValue("Latitude", marker.Position.Lat);
                     cmd.Parameters.AddWithValue("Longitude", marker.Position.Lng);
                     cmd.Parameters.AddWithValue("Text", marker.ToolTipText);
-
                     cmd.ExecuteNonQuery();                    
                 }            
             }           
@@ -61,7 +56,7 @@ namespace GMapWF.DataHelper
 
         public static void UpdateMarker(GMarkerGoogle newData, GMarkerGoogle currentMarker)
         {
-            using (SqlConnection connection = new SqlConnection(conStr))
+            using (SqlConnection connection = new SqlConnection(_conStr))
             {           
                 connection.Open();
                 if(newData != null)
@@ -79,7 +74,7 @@ namespace GMapWF.DataHelper
         public static int GetMarkerId(GMarkerGoogle marker)
         {
             int id = 0;
-            using (SqlConnection connection = new SqlConnection(conStr))
+            using (SqlConnection connection = new SqlConnection(_conStr))
             {
                 connection.Open();
                 if (marker != null)
@@ -100,7 +95,7 @@ namespace GMapWF.DataHelper
 
         public static void RemoveMarker(int id)
         {
-            using (SqlConnection connection = new SqlConnection(conStr))
+            using (SqlConnection connection = new SqlConnection(_conStr))
             {
                 connection.Open();
                 if (id > 0)

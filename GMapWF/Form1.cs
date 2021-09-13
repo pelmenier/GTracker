@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GMap.NET;
+﻿using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using GMap.NET.WindowsForms.ToolTips;
-using GMapWF.DataHelper;
 using GMapWF.Services;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace GMapWF
 {
@@ -24,16 +16,17 @@ namespace GMapWF
             InitializeComponent();
         }
 
-        GMapOverlay currentOverlay = new GMapOverlay("markers");        
-        GMarkerGoogle lastMarker ;
-        GMarkerGoogle currentMarker ;        
+        GMapOverlay _currentOverlay = new GMapOverlay("markers");        
+        GMarkerGoogle _lastMarker ;
+        GMarkerGoogle _currentMarker ;        
         
         // вошли\вышли из тригера маркера
-        bool isMarkerEnter = false;
-        bool isMouseDown = false;        
+        bool _isMarkerEnter = false;
+        bool _isMouseDown = false;
+        bool _exception = false;
 
-        double lat = 0.0;
-        double lng = 0.0;
+        double _lat = 0.0;
+        double _lng = 0.0;
 
         #region "GMap Control"
         private void gMapControl1_Load(object sender, EventArgs e)
@@ -82,48 +75,53 @@ namespace GMapWF
             gMapControl.MouseMove += new MouseEventHandler(MapControlMouseMove);
             //gMapControl.OnMarkerEnter += new MarkerEnter(gMapControl_OnMarkerEnter);
             //gMapControl.OnMarkerLeave += new MarkerLeave(gMapControl_OnMarkerLeave);           
-
-            ShowMarkers();
+            try
+            {
+                ShowMarkers();
+            }
+            catch(Exception ex)
+            {
+                AllEnabled(false);
+                _exception = true;
+            }            
         }
 
         private void MapControlMouseMove(object sender, MouseEventArgs e)
         {
-            if (isMarkerEnter && isMouseDown)
+            if (_isMarkerEnter && _isMouseDown)
             {
                 buttonAddOrUpdate.Enabled = false;
-                if (currentMarker != null)                                    
-                    NewPositionMarker(e);        
-            }      
-                           
-                           
+                if (_currentMarker != null)                                    
+                    NewPositionMarker(e);      
+            }                        
         }
 
         private void gMapControl_OnMarkerEnter(GMapMarker item)
         {
-            if(currentMarker != item && currentMarker != null) { }
+            if(_currentMarker != item && _currentMarker != null) { }
             else
             {                              
-                isMarkerEnter = true;
-                currentMarker = (GMarkerGoogle)item;             
+                _isMarkerEnter = true;
+                _currentMarker = (GMarkerGoogle)item;             
             }
         }
 
         private void gMapControl_OnMarkerLeave(GMapMarker item)
         {
-            if (currentMarker != item) { }
+            if (_currentMarker != item) { }
             else
             {
-                currentMarker = null;
-                isMarkerEnter = false;                
+                _currentMarker = null;
+                _isMarkerEnter = false;                
             }            
         }
 
         private void gMapControl_MouseUp(object sender, MouseEventArgs e)        {  
-            isMouseDown = false;
-            if(e.Button == MouseButtons.Left && currentMarker != null && lastMarker != null && isMarkerEnter) 
+            _isMouseDown = false;
+            if(e.Button == MouseButtons.Left && _currentMarker != null && _lastMarker != null && _isMarkerEnter) 
             {                
-                MarkerService.UpdateMarker(currentMarker, new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.arrow));                
-                currentMarker = null;
+                MarkerService.UpdateMarker(_currentMarker, new GMarkerGoogle(new PointLatLng(_lat, _lng), GMarkerGoogleType.arrow));                                    
+                _currentMarker = null;
                 SwitchAddOrUpdate();               
             }            
             MarkerInfoEnable();          
@@ -136,8 +134,8 @@ namespace GMapWF
                 FillMarkerInfo(item);
                 buttonAddOrUpdate.Text = "Update";
                 buttonAddOrUpdate.Enabled = true;
-                lat = item.Position.Lat;
-                lng = item.Position.Lng;
+                _lat = item.Position.Lat;
+                _lng = item.Position.Lng;
                 buttonDeleteMarker.Enabled = true;
             }            
         }
@@ -146,13 +144,13 @@ namespace GMapWF
         {
             if (e.Button == MouseButtons.Left)
             {                
-                lastMarker = (GMarkerGoogle)gMapControl.Overlays.SelectMany(o => o.Markers).FirstOrDefault(m => m.IsMouseOver == true);                            
-                if(lastMarker!=null)
+                _lastMarker = (GMarkerGoogle)gMapControl.Overlays.SelectMany(o => o.Markers).FirstOrDefault(m => m.IsMouseOver == true);                            
+                if(_lastMarker!=null)
                 {                    
-                    lat = lastMarker.Position.Lat;
-                    lng = lastMarker.Position.Lng;
+                    _lat = _lastMarker.Position.Lat;
+                    _lng = _lastMarker.Position.Lng;
                 }                
-                isMouseDown = true;                 
+                _isMouseDown = true;                 
                 MarkerInfoDisable();
             }              
         }
@@ -171,11 +169,12 @@ namespace GMapWF
 
         #region "Buttons Click"
         private void buttonAddOrUpdate_Click(object sender, EventArgs e)
-        {
+        {            
             if(buttonAddOrUpdate.Text == "Add")
             {
                 var marker = new GMarkerGoogle(new PointLatLng(Convert.ToDouble(textBoxLat.Text), Convert.ToDouble(textBoxLng.Text)), GMarkerGoogleType.blue_dot);
                 marker.ToolTipText = textBoxDiscr.Text;
+
                 if (MarkerService.GetMarkerId(marker) == 0)
                     MarkerService.AddMarker(marker);
                 else
@@ -183,32 +182,32 @@ namespace GMapWF
             }
             else if(buttonAddOrUpdate.Text == "Update")
             {                
-                MarkerService.UpdateMarker(FillData(new GMarkerGoogle(new PointLatLng(0,0),GMarkerGoogleType.arrow)), new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.arrow));                
+                MarkerService.UpdateMarker(FillData(new GMarkerGoogle(new PointLatLng(0,0),GMarkerGoogleType.arrow)), new GMarkerGoogle(new PointLatLng(_lat, _lng), GMarkerGoogleType.arrow));                
             } 
-            ShowMarkers();
+            ShowMarkers();               
         }
 
         private void buttonHideMarkers_Click(object sender, EventArgs e)
         {
-            currentOverlay.Clear();
+            _currentOverlay.Clear();
         }        
 
         private void buttonShowMarkers_Click(object sender, EventArgs e)
         {
-            ShowMarkers();
+            ShowMarkers();    
         }        
 
         private void buttonDeleteMarker_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Remove marker?", "Remove", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                bool itsOk = MarkerService.RemoveMarker(new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.arrow));
+                bool itsOk = MarkerService.RemoveMarker(new GMarkerGoogle(new PointLatLng(_lat, _lng), GMarkerGoogleType.arrow));
                 if (!itsOk)
                     MessageBox.Show("Маркера с такими данными не найдено!");
 
                 buttonDeleteMarker.Enabled = false;
             }
-            ShowMarkers();
+            ShowMarkers();         
         }
         #endregion
 
@@ -223,15 +222,15 @@ namespace GMapWF
         private void NewPositionMarker(MouseEventArgs e)
         {
             PointLatLng point = gMapControl.FromLocalToLatLng(e.X, e.Y);
-            currentMarker.Position = point;
-            FillMarkerInfo(currentMarker);
+            _currentMarker.Position = point;
+            FillMarkerInfo(_currentMarker);
         }
 
         private void ShowMarkers()
         {
-            currentOverlay.Clear();
-            MarkerService.GetMarkers(currentOverlay);            
-            gMapControl.Overlays.Add(currentOverlay);
+            _currentOverlay.Clear();            
+            MarkerService.GetMarkers(_currentOverlay);                  
+            gMapControl.Overlays.Add(_currentOverlay);
         }
 
         private void MarkerInfoEnable()
@@ -258,6 +257,17 @@ namespace GMapWF
         private void SwitchAddOrUpdate()
         {
             buttonAddOrUpdate.Text = "Add";
+        }
+
+        private void AllEnabled(bool flag)
+        {
+            textBoxDiscr.Enabled = flag;
+            textBoxLat.Enabled = flag;
+            textBoxLng.Enabled = flag;
+            buttonAddOrUpdate.Enabled = flag;
+            buttonDeleteMarker.Enabled = flag;
+            buttonHideMarkers.Enabled = flag;
+            buttonShowMarkers.Enabled = flag;
         }
         #endregion
     }
