@@ -9,19 +9,11 @@ namespace GMapWF.Services
     public static class MarkerService
     {
         public static void GetMarkers(GMapOverlay overlay)
-        {
-            try
+        {            
+            foreach(var item in DBHelper.GetMarkers())
             {
-                foreach(var item in DBHelper.GetMarkers())
-                {
-                    overlay.Markers.Add(item);
-                }     
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            
+                overlay.Markers.Add(item);
+            }     
         }
 
         public static void AddMarker(GMarkerGoogle marker)
